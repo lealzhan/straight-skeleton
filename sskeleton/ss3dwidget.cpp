@@ -130,8 +130,8 @@ void SS3DWidget::paintGL()
 
 	m_cammat.setToIdentity();
 	m_cammat.lookAt(m_cam_eye, m_cam_center, m_cam_up);
-	glMultMatrixd(m_cammat.constData());
-	glMultMatrixd(m_modelmat.constData());
+	glMultMatrixd((double*)m_cammat.constData());
+	glMultMatrixd((double*)m_modelmat.constData());
 
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT, bgmat_ambient);
@@ -181,7 +181,7 @@ void SS3DWidget::resizeGL(int w, int h)
 	glViewport((w - side) / 2, (h - side) / 2, side, side);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();	
-	glMultMatrixd(m_projmat.constData());
+	glMultMatrixd((double*)m_projmat.constData());
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -211,7 +211,7 @@ void SS3DWidget::camMoveCenter(const QVector3D& tt)
 
 void SS3DWidget::mousePressEvent(QMouseEvent * e)
 {
-	m_mouseLastPos = e->posF();
+	m_mouseLastPos = e->localPos();// posF();
 	if(e->buttons() & Qt::LeftButton)
 		setCursor(Qt::OpenHandCursor);
 	else if(e->buttons() & Qt::MidButton)
@@ -222,7 +222,7 @@ void SS3DWidget::mousePressEvent(QMouseEvent * e)
 
 void SS3DWidget::mouseMoveEvent(QMouseEvent * e)
 {
-	QVector3D t(e->posF() - m_mouseLastPos);
+	QVector3D t(e->localPos() - m_mouseLastPos);
 	t.setX( - t.x());
 	if(e->buttons() & Qt::LeftButton){
 		camMoveAroundCenter(t);
@@ -232,7 +232,7 @@ void SS3DWidget::mouseMoveEvent(QMouseEvent * e)
 		camMoveCenter(t);
 		update();
 	}
-	m_mouseLastPos = e->posF();
+	m_mouseLastPos = e->localPos();
 }
 
 void SS3DWidget::mouseReleaseEvent(QMouseEvent * e)

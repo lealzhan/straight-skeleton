@@ -144,14 +144,22 @@ void SSTask::startTask(const QList<QPolygonF>& polygons)
 	cleanSkeleton();
 	resume();
 	PSLGGraph* graph = new PSLGGraph();
-	for(int i = 0; i < polygons.size(); i++){
-		if(polygons[i].size() <= 1 || polygons[i].boundingRect().isEmpty())
-			continue;
-		graph->addPolygon(polygons[i], false );
-	}
+	//for(int i = 0; i < polygons.size(); i++){
+	//	if(polygons[i].size() <= 1 || polygons[i].boundingRect().isEmpty())
+	//		continue;
+	//	graph->addPolygon(polygons[i], false );
+	//}
+	QPolygonF contour;
+	contour.push_back(QPointF(-119, -191));
+	contour.push_back(QPointF(138, -145));
+	contour.push_back(QPointF(150, 150));
+	contour.push_back(QPointF(-150, 143));
+	contour.push_back(QPointF(-119, -191));
+	graph->addPolygon(contour, false);
+
 	m_timeIntervalIsZero = property("-Sleep Interval (ms)").toInt() <= 0;
 	m_skeleton = new PSLGSSkeleton(graph);
-	start();	
+	start();
 }
 
 void SSTask::run()
@@ -161,5 +169,6 @@ void SSTask::run()
 	
 	clock_t start = clock();
 	m_skeleton->extractSkeletion(this);
+	//m_skeleton->extractSkeletion();
 	duration = (clock() - start)/ double(CLOCKS_PER_SEC);
 }

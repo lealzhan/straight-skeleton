@@ -51,7 +51,8 @@ namespace Private{
 		ColorListEditor(QWidget *parent): QComboBox(parent){populateList();}
 		~ColorListEditor(){}
 		inline QColor getColor() const{
-			return qVariantValue<QColor>(itemData(currentIndex(), Qt::DecorationRole));
+			return itemData(currentIndex(), Qt::DecorationRole).value < QColor >();
+			//return qVariantValue<QColor>(itemData(currentIndex(), Qt::DecorationRole));
 		}
 		inline void setColor(QColor c){
 			setCurrentIndex(findData(c, int(Qt::DecorationRole)));
@@ -70,7 +71,7 @@ namespace Private{
 
 #include "ssmainwind.moc"
 
-SSMainWind::SSMainWind(QWidget *parent, Qt::WFlags flags)
+SSMainWind::SSMainWind(QWidget *parent, Qt::WindowFlags flags)
 	: QMainWindow(parent, flags), 
 	m_task(0), m_ss2dwidget(0), m_ss3dwidget(0), m_tipDlg(0), m_settings(0)
 {

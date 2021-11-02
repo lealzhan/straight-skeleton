@@ -226,26 +226,26 @@ void SSWidget::mousePressEvent(QMouseEvent * e)
 	if(e->buttons() & Qt::LeftButton){
 		switch (m_mode){
 		case PrepareAddingPolygon:
-			m_polygons.push_back(QPolygonF(QVector<QPointF>() << aligned(e->posF())));
+			m_polygons.push_back(QPolygonF(QVector<QPointF>() << aligned(e->localPos())));
 			//emit polygonAdded();
 			break;
 		case AddPoint:
 			if(m_polygons.empty())
-				m_polygons.push_back(QPolygonF(QVector<QPointF>() << aligned(e->posF())));
+				m_polygons.push_back(QPolygonF(QVector<QPointF>() << aligned(e->localPos())));
 			else
-				m_polygons.last() << aligned(e->posF());
+				m_polygons.last() << aligned(e->localPos());
 			break;
 
 		case SelectPoints:
 
 		case EditPoints:
-			if(thenEdit(e->posF())){
-				m_lastPos = e->posF();
+			if(thenEdit(e->localPos())){
+				m_lastPos = e->localPos();
 				m_mode = EditPoints;
 				setCursor(Qt::ClosedHandCursor);
 			}else{
-				m_selectRect.setTopLeft(e->posF());
-				m_selectRect.setBottomRight(e->posF());
+				m_selectRect.setTopLeft(e->localPos());
+				m_selectRect.setBottomRight(e->localPos());
 				m_displayContents |= SelectArea;
 				m_mode = SelectPoints;
 			}			
@@ -263,7 +263,7 @@ void SSWidget::mouseMoveEvent(QMouseEvent * e)
 	switch (m_mode){
 	case PrepareAddingPolygon:
 	case AddPoint:
-		alignedP = aligned(e->posF());
+		alignedP = aligned(e->localPos());
 		if(e->buttons() & Qt::LeftButton) 
 			// move the last point if dragging
 			m_polygons.last().last() = alignedP;
@@ -272,7 +272,7 @@ void SSWidget::mouseMoveEvent(QMouseEvent * e)
 
 	case SelectPoints:
 		if(e->buttons() & Qt::LeftButton){
-			m_selectRect.setBottomRight(e->posF());
+			m_selectRect.setBottomRight(e->localPos());
 			select(m_selectRect);
 			update();
 		}
@@ -281,9 +281,9 @@ void SSWidget::mouseMoveEvent(QMouseEvent * e)
 		if(e->buttons() & Qt::LeftButton){
 			for(int i = 0; i < m_focusedPoints.size(); i++){
 				PointIndex& index = m_focusedPoints[i];
-				m_polygons[index.first][index.second] += (e->posF() - m_lastPos);
+				m_polygons[index.first][index.second] += (e->localPos() - m_lastPos);
 			}
-			m_lastPos = e->posF();
+			m_lastPos = e->localPos();
 			update();
 		}
 	default:
